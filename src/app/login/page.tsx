@@ -1,10 +1,24 @@
+"use client"
+
+import { useContext, useState } from "react";
 import Head from "next/head";
 import { Button, Center, Flex, Input, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import logoImg from '../../../public/images/logo.svg'
 import Link from "next/link";
 
+import { AuthContext } from "@/context/AuthContext";
+
 export default function Login() {
+	const { signIn } = useContext(AuthContext);
+
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
+	async function handleLogin() {
+		await signIn({email, password});
+	}
+
 	return (
 		<>
 			<Head>
@@ -30,6 +44,8 @@ export default function Login() {
 						placeholder="email@email.com"
 						type="email"
 						mb={3}
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
 					/>
 
 					<Input
@@ -39,6 +55,8 @@ export default function Login() {
 						placeholder="*******"
 						type="text"
 						mb={6}
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
 					/>
 
 					<Button
@@ -47,6 +65,7 @@ export default function Login() {
 						color="gray.900"
 						size="lg"
 						_hover={{ bg: "#ffb13e" }}
+						onClick={handleLogin}
 					>
 						Acessar
 					</Button>
