@@ -5,12 +5,12 @@ import { destroyCookie, setCookie } from "nookies";
 import { useRouter } from "next/navigation";
 import { api } from "../services/apiClient";
 
-interface SubscriptionProps{
+interface SubscriptionProps {
 	id: string;
 	status: string;
 }
 
-interface UserProps{
+interface UserProps {
 	id: string;
 	name: string;
 	email: string;
@@ -22,7 +22,9 @@ interface AuthContextData {
 	user: UserProps;
 	isAuthenticated: boolean;
 	signIn: (credentials: SignInProps) => Promise<void>;
-} 
+	signUp: (credentials: SignUpProps) => Promise<void>;
+	logoutUser: () => Promise<void>;
+}
 
 type AuthProviderProps = {
 	children: ReactNode;
@@ -33,9 +35,15 @@ interface SignInProps {
 	password: string;
 }
 
+interface SignUpProps {
+	name: string;
+	email: string;
+	password: string;
+}
+
 export const AuthContext = createContext({} as AuthContextData);
 
-export function signOut(){
+export function signOut() {
 	console.log("ERROR LOGOUT");
 
 	try {
@@ -76,14 +84,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			api.defaults.headers['Authorization'] = `Bearer ${token}`;
 
 			router.push('/dashboard');
-			
+
 		} catch (error) {
 			console.log("ERROR LOGING", error);
 		}
 	}
 
+	async function signUp({ name, email, password }: SignUpProps) {
+		try {
+			const response = await api.post('/users', {
+				name,
+				email,
+				password
+			});
+
+			router.push('/login');
+		} catch (error) {
+			console.log("ERROR LOGING", error);
+		}
+	}
+
+	async function logoutUser(){
+		try {
+			destroyCookie(null, '@barber.token', { path: '/' });
+			setUser(null);			
+		} catch (error) {
+			console.log("Error ao deslogar", error);
+		}
+	}
+
 	return (
-		<AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+		<AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp, logoutUser }}>
 			{children}
 		</AuthContext.Provider>
 	)
