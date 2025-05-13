@@ -3,15 +3,72 @@
 import { Flex, Text, Heading, Box, Input, Button } from "@chakra-ui/react";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
+import { api } from "@/services/apiClient";
+
+interface ProfileProps {
+	id: string;
+	name: string;
+	email: string;
+	endereco: string | null;
+	premium: boolean;
+}
 
 export default function Profile() {
+	const [user, setUser] = useState<ProfileProps>();
+	const [name, setName] = useState("");
+	const [endereco, setEndereco] = useState("");
+	const [email, setEmail] = useState("");
 	const { logoutUser } = useContext(AuthContext);
 
 	async function handleLogout(){
 		await logoutUser();
 	}
+
+	async function handleUpdateUser(){
+		if (name === ""){
+			return;
+		}
+
+		try {
+			await api.put('/users', {
+				name,
+				endereco
+			});
+
+			alert("Dados alterados com sucesso");
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	useEffect(() => {
+		async function getClient(){
+			try{
+	
+				const response = await api.get('/me');
+
+				const user = {
+					id: response.data.id,
+					name: response.data.name,
+					email: response.data.email,
+					endereco: response.data?.endereco,
+					premium: response.data?.subscriptions?.status === 'active'
+				}
+
+				setUser(user);
+				setName(user.name);
+				setEndereco(user.endereco);
+				setEmail(user.email);
+	
+			}catch(error){
+				console.log(error);
+			}
+		}
+
+		getClient();
+	}, []);
 
 	return (
 		<>
@@ -36,6 +93,8 @@ export default function Profile() {
 								size={"lg"}
 								type="text"
 								mb={3}
+								value={name}
+								onChange={(e) => setName(e.target.value)}
 							/>
 
 							<Text mb={2} fontSize={"xl"} fontWeight={"bold"} color={"white"}>
@@ -48,6 +107,8 @@ export default function Profile() {
 								size={"lg"}
 								type="text"
 								mb={3}
+								value={endereco}
+								onChange={(e) => setEndereco(e.target.value)}
 							/>
 
 							<Text mb={2} fontSize={"xl"} fontWeight={"bold"} color={"white"}>
@@ -64,7 +125,9 @@ export default function Profile() {
 								alignItems={"center"}
 								justifyContent={"space-between"}
 							>
-								<Text p={2} fontSize={"lg"} color={"#4dffb4"}>Plano Grátis</Text>
+								<Text p={2} fontSize={"lg"} color={user?.premium ? "#FBA931" : "#4dffb4"}>
+									Plano {user?.premium ? "Premium" : "Grátis"}
+								</Text>
 
 								<Link href={"/planos"} style={{ textDecoration: 'none' }}>
 									<Box
@@ -86,6 +149,7 @@ export default function Profile() {
 								background={"button.cta"}
 								size={"lg"}
 								_hover={{ bg: "#ffb13e" }}
+								onClick={handleUpdateUser}
 							>
 								Salvar
 							</Button>
