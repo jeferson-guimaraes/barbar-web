@@ -1,8 +1,18 @@
+"use client";
+
 import { Flex, Text, Heading, Box, Input, Button } from "@chakra-ui/react";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import Link from "next/link";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 export default function Profile() {
+	const { logoutUser } = useContext(AuthContext);
+
+	async function handleLogout(){
+		await logoutUser();
+	}
+
 	return (
 		<>
 			<Sidebar>
@@ -90,6 +100,7 @@ export default function Profile() {
 								color={"red.500"}
 								size={"lg"}
 								_hover={{ bg: "transparent" }}
+								onClick={handleLogout}
 							>
 								Sair da conta
 							</Button>

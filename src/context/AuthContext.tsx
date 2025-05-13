@@ -129,6 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		try {
 			destroyCookie(null, '@barber.token', { path: '/' });
 			setUser(null);
+			router.push('/login');
 		} catch (error) {
 			console.log("Error ao deslogar", error);
 		}
