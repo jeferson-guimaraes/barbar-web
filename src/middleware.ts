@@ -34,7 +34,9 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    ...PROTECTED_ROUTES.map(route => `${route}/:path*`),
-    ...AUTH_ROUTES,
+    '/dashboard/:path*',
+    '/profile/:path*',
+    '/login',
+    '/register',
   ],
 };
