@@ -1,12 +1,14 @@
-import Head from "next/head";
-import { Flex, Text} from "@chakra-ui/react";
+import { Sidebar } from "@/components/sidebar/Sidebar"
+import { Flex, Text } from "@chakra-ui/react"
 
 export default function Dashboard() {
 	return (
 		<>
-			<Flex>
-				<Text fontSize="30pt">Página Dashboard</Text>
-			</Flex>
+			<Sidebar>
+				<Flex>
+					<Text>Dashboard</Text>
+				</Flex>
+			</Sidebar>
 		</>
 	)
 }
