@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const PROTECTED_ROUTES = [
   '/dashboard',
-  '/profile'
+  '/profile',
+  '/haircuts'
 ];
 
 const AUTH_ROUTES = [
@@ -36,6 +37,7 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/profile/:path*',
+    '/haircuts/:path*',
     '/login',
     '/register',
   ],
